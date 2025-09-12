@@ -33,6 +33,7 @@ const d = [13, 1];
 btn.addEventListener("click", (e) => {
     e.preventDefault();
     isDFS = !isDFS;
+    btn.textContent = isDFS ? "DFS" : "BFS";
 
     container.innerHTML = '';
     maze = reset_maze.map(row => [...row]);
