@@ -1,0 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.block {
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+body {
+    background: #000;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.size {
+    position: absolute;
+    background: #20507e;
+    color: wheat;
+    top: 4px;
+    left: 4px;
+    padding: 8px;
+}
+
+.maze-container {
+    background:#20507e;
+    display: flex;
+    flex-wrap: wrap;
+}
