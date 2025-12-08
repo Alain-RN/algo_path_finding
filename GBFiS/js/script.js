@@ -22,12 +22,26 @@ const maze = [
     [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
+
+let input_element = (id) => {
+    return document.getElementById(id);
+}
+
 const size = 18;
 const container = document.querySelector(".maze-container");
 container.style.width = maze[0].length * size + "px";
 container.style.height = maze.length * size + "px";
+
 const size_container = document.querySelector(".size");
 size_container.innerHTML = maze.length + " blocs <br/>" + maze[0].length + " blocs"
+
+const commmand_container = document.querySelector(".command");
+const show_path = input_element("show_path");
+const show_weigth = input_element("show_weigth");
+window.onload = () => {
+    commmand_container.style.left = `${size_container.offsetWidth + 8}px`;
+};
+
 
 function find_spec_point(maze, block_type) {
     for (let i = 0; i < maze.length; i++) {
@@ -73,7 +87,7 @@ function manhattan_distance(point) {
     }
 }
 function display_maze(maze, show_weight, show_path) {
-
+    container.innerHTML = "";
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[0].length; j++) {
             const block = gen_block(maze[i][j], show_path)
@@ -199,6 +213,16 @@ function solve_maze() {
 }
 
 solve_maze();
+
+show_path.addEventListener("change", () => {
+    display_maze(maze, show_weigth.checked, show_path.checked);
+});
+
+show_weigth.addEventListener("change", () => {
+    display_maze(maze, show_weigth.checked , show_path.checked);
+});
+
 display_maze(maze, true, true);
+
 
 
