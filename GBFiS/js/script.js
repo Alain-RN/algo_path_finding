@@ -32,10 +32,10 @@ size_container.innerHTML = maze.length + " blocs <br/>" + maze[0].length + " blo
 function find_spec_point(maze, block_type) {
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[0].length; j++) {
-            if(maze[i][j] == block_type) {
+            if (maze[i][j] == block_type) {
                 return {
-                    x : j,
-                    y : i,
+                    x: j,
+                    y: i,
                 }
             }
         }
@@ -63,48 +63,45 @@ function gen_block(block_type) {
 }
 
 function manhattan_distance(point) {
-    const target     = find_spec_point(maze, 3);
+    const target = find_spec_point(maze, 3);
     const x_distance = Math.abs(point.x - target.x);
     const y_distance = Math.abs(point.y - target.y);
     return {
-        d : x_distance + y_distance,
+        d: x_distance + y_distance,
     }
 }
-
 function display_maze(maze, bool_weight) {
+
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[0].length; j++) {
             const block = gen_block(maze[i][j])
-            if(maze[i][j] == 0 && bool_weight) {
+            if (maze[i][j] == 0 && bool_weight) {
                 let point = {
-                    x : j,
-                    y : i
+                    x: j,
+                    y: i
                 }
-                block.textContent = `${manhattan_distance(point).d}` 
+                block.textContent = `${manhattan_distance(point).d}`
             }
             container.append(block);
         }
     }
 }
 
-display_maze(maze, true);
-
-
 function move(node) {
     let t = false, b = false, l = false, r = false;
-    if(maze[node.y - 1][node.x] != 1) {
+    if (maze[node.y - 1][node.x] != 1) {
         t = true
     }
 
-    if(maze[node.y + 1][node.x] != 1) {
+    if (maze[node.y + 1][node.x] != 1) {
         b = true
-    }    
-    
-    if(maze[node.y][node.x - 1] != 1) {
+    }
+
+    if (maze[node.y][node.x - 1] != 1) {
         l = true
     }
 
-    if(maze[node.y][node.x + 1] != 1) {
+    if (maze[node.y][node.x + 1] != 1) {
         r = true
     }
 
@@ -113,11 +110,91 @@ function move(node) {
     }
 }
 
-const pt = {
-    x : 5,
-    y : 3,
-    parent : null
+function distance_min(frontiere) {
+    let min_dist = manhattan_distance(frontiere[0]).d;
+    let index_min_dist = 0;
+    for (let i = 1; i < frontiere.length; i++) {
+        if (manhattan_distance(frontiere[i]).d < min_dist) {
+            min_dist = manhattan_distance(frontiere[i]).d;
+            index_min_dist = i;
+        }
+    }
+    const value = frontiere[index_min_dist]
+
+    frontiere.splice(index_min_dist, 1);
+
+    return value
 }
+
+function solve_maze() {
+    const a = find_spec_point(maze, 2);
+
+    let root = {
+        x: a.x,
+        y: a.y,
+        parent: null
+    }
+
+    let frontiere = [root];
+    let explored = [];
+
+    while (frontiere.length > 0) {
+
+        const node = distance_min(frontiere);
+        if (manhattan_distance(node).d == 0) {
+            console.log(node);
+
+            break;
+        }
+
+
+        explored.push(`${node.x},${node.y}`);
+
+        if (move(node).t) {
+            const child = { x: node.x, y: node.y - 1, parent: node };
+            if (!explored.includes(`${child.x},${child.y}`) &&
+                !frontiere.some(n => n.x === child.x && n.y === child.y)) {
+                frontiere.push(child);
+            }
+        }
+
+        if (move(node).b) {
+            const child = { x: node.x, y: node.y + 1, parent: node };
+            if (!explored.includes(`${child.x},${child.y}`) &&
+                !frontiere.some(n => n.x === child.x && n.y === child.y)) {
+                frontiere.push(child);
+            }
+        }
+
+        if (move(node).l) {
+            const child = { x: node.x - 1, y: node.y, parent: node };
+            if (!explored.includes(`${child.x},${child.y}`) &&
+                !frontiere.some(n => n.x === child.x && n.y === child.y)) {
+                frontiere.push(child);
+            }
+        }
+
+        if (move(node).r) {
+            const child = { x: node.x + 1, y: node.y, parent: node };
+            if (!explored.includes(`${child.x},${child.y}`) &&
+                !frontiere.some(n => n.x === child.x && n.y === child.y)) {
+                frontiere.push(child);
+            }
+        }
+    }
+
+}
+
+const pt = {
+    x: 5,
+    y: 3,
+    parent: null
+}
+
+
+solve_maze();
+
+display_maze(maze, true);
 
 console.log(move(pt))
 
