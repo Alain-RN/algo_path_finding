@@ -43,14 +43,14 @@ function find_spec_point(maze, block_type) {
     return null
 }
 
-function gen_block(block_type) {
+function gen_block(block_type, b_result) {
     const block = document.createElement("div");
     block.className = "block";
 
     block.style.width = size + "px";
     block.style.height = size + "px";
 
-    if (block_type == 0) {
+    if (block_type == 0 || (block_type == 4 && !b_result)) {
         block.style.background = "black"
     } else if (block_type == 2) {
         block.style.background = "red";
@@ -58,6 +58,8 @@ function gen_block(block_type) {
     } else if (block_type == 3) {
         block.style.background = "green";
         block.textContent = "A"
+    } else if (block_type == 4 && b_result) {
+        block.style.background = "white";
     }
     return block;
 }
@@ -70,17 +72,20 @@ function manhattan_distance(point) {
         d: x_distance + y_distance,
     }
 }
-function display_maze(maze, bool_weight) {
+function display_maze(maze, show_weight, show_path) {
 
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[0].length; j++) {
-            const block = gen_block(maze[i][j])
-            if (maze[i][j] == 0 && bool_weight) {
+            const block = gen_block(maze[i][j], show_path)
+            if ((maze[i][j] == 0 || maze[i][j] == 4) && show_weight ) {
                 let point = {
                     x: j,
                     y: i
                 }
                 block.textContent = `${manhattan_distance(point).d}`
+                if ( maze[i][j] == 4 && show_path) {
+                   block.style.color = "#000" 
+                }
             }
             container.append(block);
         }
@@ -142,8 +147,16 @@ function solve_maze() {
 
         const node = distance_min(frontiere);
         if (manhattan_distance(node).d == 0) {
-            console.log(node);
-
+            let way = node;
+            while (way != null) {
+                if(
+                    !(manhattan_distance(way).d == 0) &&
+                    !(way.x == a.x && way.y == a.y)
+                ) {
+                    maze[way.y][way.x] = 4
+                }
+                way = way.parent;
+            }
             break;
         }
 
@@ -185,16 +198,7 @@ function solve_maze() {
 
 }
 
-const pt = {
-    x: 5,
-    y: 3,
-    parent: null
-}
-
-
 solve_maze();
+display_maze(maze, true, true);
 
-display_maze(maze, true);
-
-console.log(move(pt))
 
